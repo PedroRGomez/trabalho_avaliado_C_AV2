@@ -1,0 +1,413 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Estrutura da Pilha
+typedef struct {
+    int *data;
+    int top;
+    int size;
+} Stack;
+
+// Estrutura da Fila
+typedef struct {
+    int *data;
+    int front;
+    int rear;
+    int size;
+} Queue;
+
+// Estrutura do Nó da Árvore
+typedef struct node {
+    int data;
+    struct node *left;
+    struct node *right;
+} Node;
+
+// Funções da Pilha
+void initStack(Stack *stack, int size) {
+    stack->data = (int*)malloc(size * sizeof(int));
+    stack->top = -1;
+    stack->size = size;
+}
+
+int isStackEmpty(Stack *stack) {
+    return stack->top == -1;
+}
+
+int isStackFull(Stack *stack) {
+    return stack->top == stack->size - 1;
+}
+
+void push(Stack *stack, int value) {
+    if (isStackFull(stack)) {
+        printf("Erro: Pilha cheia!\n");
+        return;
+    }
+    stack->data[++stack->top] = value;
+}
+
+int pop(Stack *stack) {
+    if (isStackEmpty(stack)) {
+        printf("Erro: Pilha vazia!\n");
+        return -1;
+    }
+    return stack->data[stack->top--];
+}
+
+void printStack(Stack *stack) {
+    if (isStackEmpty(stack)) {
+        printf("Pilha vazia!\n");
+        return;
+    }
+    printf("Pilha: ");
+    for (int i = stack->top; i >= 0; i--) {
+        printf("%d ", stack->data[i]);
+    }
+    printf("\n");
+}
+
+void clearStack(Stack *stack) {
+    stack->top = -1;
+}
+
+int getTop(Stack *stack) {
+    if (isStackEmpty(stack)) {
+        printf("Erro: Pilha vazia!\n");
+        return -1;
+    }
+    return stack->data[stack->top];
+}
+
+// Funções da Fila
+void initQueue(Queue *queue, int size) {
+    queue->data = (int*)malloc(size * sizeof(int));
+    queue->front = 0;
+    queue->rear = -1;
+    queue->size = size;
+}
+
+int isQueueEmpty(Queue *queue) {
+    return queue->rear < queue->front;
+}
+
+int isQueueFull(Queue *queue) {
+    return queue->rear == queue->size - 1;
+}
+
+void enqueue(Queue *queue, int value) {
+    if (isQueueFull(queue)) {
+        printf("Erro: Fila cheia!\n");
+        return;
+    }
+    queue->data[++queue->rear] = value;
+}
+
+int dequeue(Queue *queue) {
+    if (isQueueEmpty(queue)) {
+        printf("Erro: Fila vazia!\n");
+        return -1;
+    }
+    return queue->data[queue->front++];
+}
+
+void printQueue(Queue *queue) {
+    if (isQueueEmpty(queue)) {
+        printf("Fila vazia!\n");
+        return;
+    }
+    printf("Fila: ");
+    for (int i = queue->front; i <= queue->rear; i++) {
+        printf("%d ", queue->data[i]);
+    }
+    printf("\n");
+}
+
+void clearQueue(Queue *queue) {
+    queue->front = 0;
+    queue->rear = -1;
+}
+
+int getMaximum(Queue *queue) {
+    if (isQueueEmpty(queue)) {
+        printf("Erro: Fila vazia!\n");
+        return -1;
+    }
+    int max = queue->data[queue->front];
+    for (int i = queue->front + 1; i <= queue->rear; i++) {
+        if (queue->data[i] > max) {
+            max = queue->data[i];
+        }
+    }
+    return max;
+}
+
+int getMinimum(Queue *queue) {
+    if (isQueueEmpty(queue)) {
+        printf("Erro: Fila vazia!\n");
+        return -1;
+    }
+    int min = queue->data[queue->front];
+    for (int i = queue->front + 1; i <= queue->rear; i++) {
+        if (queue->data[i] < min) {
+            min = queue->data[i];
+        }
+    }
+    return min;
+}
+
+// Funções da Árvore
+Node* createNode(int data) {
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+Node* insert(Node *root, int data) {
+    if (root == NULL) {
+        return createNode(data);
+    }
+    if (data < root->data) {
+        root->left = insert(root->left, data);
+    } else if (data > root->data) {
+        root->right = insert(root->right, data);
+    }
+    return root;
+}
+
+Node* search(Node *root, int key) {
+    if (root == NULL || root->data == key) {
+        return root;
+    }
+    if (key < root->data) {
+        return search(root->left, key);
+    }
+    return search(root->right, key);
+}
+
+void printInOrder(Node *root) {
+    if (root != NULL) {
+        printInOrder(root->left);
+        printf("%d ", root->data);
+        printInOrder(root->right);
+    }
+}
+
+void printPostOrder(Node *root) {
+    if (root != NULL) {
+        printPostOrder(root->right);
+        printf("%d ", root->data);
+        printPostOrder(root->left);
+    }
+}
+
+int getMaximumValue(Node *root) {
+    if (root == NULL) {
+        printf("Erro: Árvore vazia!\n");
+        return -1;
+    }
+    while (root->right != NULL) {
+        root = root->right;
+    }
+    return root->data;
+}
+
+void printMenu() {
+    printf("\n");
+    printf("Menu:\n");
+    printf("(1) Executar Pilha\n");
+    printf("(2) Executar Fila\n");
+    printf("(3) Executar Árvore\n");
+    printf("(0) Sair\n");
+    printf("Escolha uma opção: ");
+}
+
+void printStackMenu() {
+    printf("\n");
+    printf("Menu da Pilha:\n");
+    printf("(1) Empilhar\n");
+    printf("(2) Desempilhar\n");
+    printf("(3) Imprimir Pilha\n");
+    printf("(4) Limpar Pilha\n");
+    printf("(5) Imprimir Topo da Pilha\n");
+    printf("(0) Voltar ao Menu Principal\n");
+    printf("Escolha uma opção: ");
+}
+
+void printQueueMenu() {
+    printf("\n");
+    printf("Menu da Fila:\n");
+    printf("(1) Enfileirar\n");
+    printf("(2) Desenfileirar\n");
+    printf("(3) Imprimir Fila\n");
+    printf("(4) Limpar Fila\n");
+    printf("(5) Maior Elemento da Fila\n");
+    printf("(6) Menor Elemento da Fila\n");
+    printf("(0) Voltar ao Menu Principal\n");
+    printf("Escolha uma opção: ");
+}
+
+void printTreeMenu() {
+    printf("\n");
+    printf("Menu da Árvore:\n");
+    printf("(1) Inserir elemento\n");
+    printf("(2) Buscar elemento\n");
+    printf("(3) Imprimir em Ordem\n");
+    printf("(4) Imprimir Pós-Ordem\n");
+    printf("(5) Imprimir Sub-Árvore Direita-Primeiro\n");
+    printf("(6) Encontrar Maior Elemento\n");
+    printf("(0) Voltar ao Menu Principal\n");
+    printf("Escolha uma opção: ");
+}
+
+int main() {
+    Stack stack;
+    Queue queue;
+    Node *root = NULL;
+    int option, subOption, value, key;
+
+    do {
+        printMenu();
+        scanf("%d", &option);
+
+        switch (option) {
+            case 1: // Pilha
+                do {
+                    printStackMenu();
+                    scanf("%d", &subOption);
+
+                    switch (subOption) {
+                        case 1: // Empilhar
+                            printf("Digite o valor a ser empilhado: ");
+                            scanf("%d", &value);
+                            push(&stack, value);
+                            break;
+                        case 2: // Desempilhar
+                            value = pop(&stack);
+                            if (value != -1) {
+                                printf("Elemento desempilhado: %d\n", value);
+                            }
+                            break;
+                        case 3: // Imprimir Pilha
+                            printStack(&stack);
+                            break;
+                        case 4: // Limpar Pilha
+                            clearStack(&stack);
+                            printf("Pilha limpa!\n");
+                            break;
+                        case 5: // Imprimir Topo da Pilha
+                            value = getTop(&stack);
+                            if (value != -1) {
+                                printf("Topo da pilha: %d\n", value);
+                            }
+                            break;
+                        case 0: // Voltar ao Menu Principal
+                            break;
+                        default:
+                            printf("Opção inválida!\n");
+                    }
+                } while (subOption != 0);
+                break;
+            case 2: // Fila
+                do {
+                    printQueueMenu();
+                    scanf("%d", &subOption);
+
+                    switch (subOption) {
+                        case 1: // Enfileirar
+                            printf("Digite o valor a ser enfileirado: ");
+                            scanf("%d", &value);
+                            enqueue(&queue, value);
+                            break;
+                        case 2: // Desenfileirar
+                            value = dequeue(&queue);
+                            if (value != -1) {
+                                printf("Elemento desenfileirado: %d\n", value);
+                            }
+                            break;
+                        case 3: // Imprimir Fila
+                            printQueue(&queue);
+                            break;
+                        case 4: // Limpar Fila
+                            clearQueue(&queue);
+                            printf("Fila limpa!\n");
+                            break;
+                        case 5: // Maior Elemento da Fila
+                            value = getMaximum(&queue);
+                            if (value != -1) {
+                                printf("Maior elemento da fila: %d\n", value);
+                            }
+                            break;
+                        case 6: // Menor Elemento da Fila
+                            value = getMinimum(&queue);
+                            if (value != -1) {
+                                printf("Menor elemento da fila: %d\n", value);
+                            }
+                            break;
+                        case 0: // Voltar ao Menu Principal
+                            break;
+                        default:
+                            printf("Opção inválida!\n");
+                    }
+                } while (subOption != 0);
+                break;
+            case 3: // Árvore
+                do {
+                    printTreeMenu();
+                    scanf("%d", &subOption);
+
+                    switch (subOption) {
+                        case 1: // Inserir elemento
+                            printf("Digite o valor a ser inserido na árvore: ");
+                            scanf("%d", &value);
+                            root = insert(root, value);
+                            break;
+                        case 2: // Buscar elemento
+                            printf("Digite o valor a ser buscado na árvore: ");
+                            scanf("%d", &key);
+                            Node *result = search(root, key);
+                            if (result != NULL) {
+                                printf("Elemento encontrado!\n");
+                            } else {
+                                printf("Elemento não encontrado!\n");
+                            }
+                            break;
+                        case 3: // Imprimir em Ordem
+                            printf("Árvore em Ordem: ");
+                            printInOrder(root);
+                            printf("\n");
+                            break;
+                        case 4: // Imprimir Pós-Ordem
+                            printf("Árvore em Pós-Ordem: ");
+                            printPostOrder(root);
+                            printf("\n");
+                            break;
+                        case 5: // Imprimir Sub-Árvore Direita-Primeiro
+                            printf("Sub-Árvore Direita-Primeiro: ");
+                            printPostOrder(root->right);
+                            printf("%d ", root->data);
+                            printPostOrder(root->left);
+                            printf("\n");
+                            break;
+                        case 6: // Encontrar Maior Elemento
+                            value = getMaximumValue(root);
+                            printf("Maior elemento da árvore: %d\n", value);
+                            break;
+                        case 0: // Voltar ao Menu Principal
+                            break;
+                        default:
+                            printf("Opção inválida!\n");
+                    }
+                } while (subOption != 0);
+                break;
+            case 0: // Sair
+                printf("Encerrando o programa...\n");
+                break;
+            default:
+                printf("Opção inválida!\n");
+        }
+    } while (option != 0);
+
+    return 0;
+}
